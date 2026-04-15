@@ -25,3 +25,10 @@ if(BUILD_TESTS)
     
     add_test(NAME banking_check COMMAND banking_check)
 endif()
+
+# Coverage
+option(ENABLE_COVERAGE "Enable coverage" OFF)
+if(ENABLE_COVERAGE)
+    target_compile_options(banking PRIVATE --coverage)
+    target_link_options(banking PRIVATE --coverage)
+endif()
