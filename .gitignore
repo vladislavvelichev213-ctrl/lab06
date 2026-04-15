@@ -1,0 +1,21 @@
+# Build directories
+_build/
+banking/_build/
+build/
+*_build/
+
+# Object files
+*.o
+*.a
+*.so
+*.exe
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
