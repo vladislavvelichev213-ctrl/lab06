@@ -3,8 +3,6 @@ name: Coveralls
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   coverage:
@@ -20,7 +18,7 @@ jobs:
         sudo apt update
         sudo apt install -y cmake g++ lcov
 
-    - name: Configure with coverage
+    - name: Configure banking with coverage
       run: |
         cd banking
         cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage"
@@ -37,8 +35,8 @@ jobs:
     - name: Collect coverage
       run: |
         cd banking
-        lcov --capture --directory . --output-file coverage.info
-        lcov --remove coverage.info '/usr/*' '*/third-party/*' '*/_build/*' --output-file coverage.info
+        lcov --capture --directory . --output-file coverage.info --no-external
+        lcov --remove coverage.info '*/_build/*' '*/tests/*' --output-file coverage.info
         cd ..
 
     - name: Upload to Coveralls
