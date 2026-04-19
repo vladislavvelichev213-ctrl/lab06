@@ -17,8 +17,8 @@ public:
     std::string getName() const;
     double getBalance() const;
     
-    void deposit(double amount);
-    void withdraw(double amount);
+    virtual void deposit(double amount);
+    virtual void withdraw(double amount);
     void transfer(Account& to, double amount);
 };
 
