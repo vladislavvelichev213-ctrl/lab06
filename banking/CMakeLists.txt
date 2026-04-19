@@ -1,4 +1,3 @@
-cat > CMakeLists.txt <<'EOF'
 cmake_minimum_required(VERSION 3.10)
 project(banking)
 
@@ -14,10 +13,8 @@ target_include_directories(banking PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 if(BUILD_TESTS)
     enable_testing()
     
-    # Add Google Test and Google Mock
     add_subdirectory(../third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
     
-    # Test files
     file(GLOB BANKING_TEST_SOURCES tests/*.cpp)
     add_executable(banking_check ${BANKING_TEST_SOURCES})
     
@@ -26,4 +23,3 @@ if(BUILD_TESTS)
     
     add_test(NAME banking_check COMMAND banking_check)
 endif()
-EOF
