@@ -1,5 +1,5 @@
 # Laboratory work 5: Google Test
-
+[![Coverage Status](https://coveralls.io/repos/github/vladislavvelichev213-ctrl/lab05/badge.svg?branch=main)](https://coveralls.io/github/vladislavvelichev213-ctrl/lab05?branch=main)
 ## Author
 **Vladislav Velichev** (vladislavvelichev213-ctrl)
 
