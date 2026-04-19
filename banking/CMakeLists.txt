@@ -1,3 +1,4 @@
+cat > CMakeLists.txt <<'EOF'
 cmake_minimum_required(VERSION 3.10)
 project(banking)
 
@@ -16,7 +17,7 @@ if(BUILD_TESTS)
     # Add Google Test and Google Mock
     add_subdirectory(../third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
     
-    # Google Mock is part of googletest, just link it
+    # Test files
     file(GLOB BANKING_TEST_SOURCES tests/*.cpp)
     add_executable(banking_check ${BANKING_TEST_SOURCES})
     
@@ -25,3 +26,4 @@ if(BUILD_TESTS)
     
     add_test(NAME banking_check COMMAND banking_check)
 endif()
+EOF
