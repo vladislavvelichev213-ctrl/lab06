@@ -12,6 +12,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
+        fetch-depth: 0
 
     - name: Install dependencies
       run: |
@@ -21,7 +22,7 @@ jobs:
     - name: Configure banking with coverage
       run: |
         cd banking
-        cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage"
+        cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage -fprofile-arcs -ftest-coverage"
         cd ..
 
     - name: Build and run tests
@@ -32,11 +33,12 @@ jobs:
         ./banking_check
         cd ../..
 
-    - name: Collect coverage data
+    - name: Collect coverage data (ignore mismatches)
       run: |
         cd banking
-        lcov --capture --directory . --output-file coverage.info --no-external
-        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info
+        lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors mismatch
+        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info --ignore-errors mismatch
+        lcov --list coverage.info
         cd ..
 
     - name: Upload to Coveralls
@@ -45,4 +47,3 @@ jobs:
         file: banking/coverage.info
         format: lcov
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        coveralls-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
