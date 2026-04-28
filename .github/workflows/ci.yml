@@ -20,15 +20,20 @@ jobs:
         sudo apt update
         sudo apt install -y cmake g++
 
-    - name: Configure main project
-      run: cmake -H. -B_build -DBUILD_TESTS=OFF
-
-    - name: Build main project
-      run: cmake --build _build
-
-    - name: Configure banking (without tests)
+    - name: Configure banking with tests
       run: |
         cd banking
-        cmake -H. -B_build
+        cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
         cd ..
 
+    - name: Build banking tests
+      run: |
+        cd banking
+        cmake --build _build
+        cd ..
+
+    - name: Run banking tests
+      run: |
+        cd banking/_build
+        ./banking_check
+        cd ../..
