@@ -20,22 +20,22 @@ jobs:
         sudo apt update
         sudo apt install -y cmake g++
 
-    - name: Configure main project
-      run: cmake -H. -B_build -DBUILD_TESTS=ON
+    - name: Configure CMake for main tests
+      run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
 
-    - name: Build main project
+    - name: Build main tests
       run: cmake --build _build
 
     - name: Run main tests
       run: ctest --test-dir _build --output-on-failure
 
-    - name: Configure banking project
+    - name: Configure banking tests
       run: |
         cd banking
-        cmake -H. -B_build -DBUILD_TESTS=ON
+        cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
         cd ..
 
-    - name: Build banking project
+    - name: Build banking tests
       run: |
         cd banking
         cmake --build _build
@@ -46,4 +46,3 @@ jobs:
         cd banking/_build
         ./banking_check
         cd ../..
-

@@ -36,3 +36,8 @@ if(BUILD_TESTS)
   target_include_directories(check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   add_test(NAME check COMMAND check)
 endif()
+
+# Отключаем -Werror для GTest
+if(BUILD_TESTS)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error")
+endif()
