@@ -1,29 +1,33 @@
 #include "Transaction.h"
 #include <iostream>
 
-Transaction::Transaction(int fromId, int toId, double amount)
-    : fromId(fromId), toId(toId), amount(amount), status("pending") {
+Transaction::Transaction(Account* from, Account* to, double amount)
+    : fromAccount(from), toAccount(to), amount(amount), status("pending") {
     timestamp = std::time(nullptr);
 }
 
-int Transaction::getFromId() const { return fromId; }
-int Transaction::getToId() const { return toId; }
+Account* Transaction::getFromAccount() const { return fromAccount; }
+Account* Transaction::getToAccount() const { return toAccount; }
 double Transaction::getAmount() const { return amount; }
 std::time_t Transaction::getTimestamp() const { return timestamp; }
 std::string Transaction::getStatus() const { return status; }
 
 void Transaction::execute() {
     if (status == "pending") {
+        fromAccount->withdraw(amount);
+        toAccount->deposit(amount);
         status = "completed";
-        std::cout << "Transaction executed: " << fromId << " -> " << toId 
-                  << " amount: " << amount << std::endl;
+        std::cout << "Transaction executed: " << fromAccount->getId() << " -> " 
+                  << toAccount->getId() << " amount: " << amount << std::endl;
     }
 }
 
 void Transaction::rollback() {
     if (status == "completed") {
+        toAccount->withdraw(amount);
+        fromAccount->deposit(amount);
         status = "rolled_back";
-        std::cout << "Transaction rolled back: " << fromId << " -> " << toId 
-                  << " amount: " << amount << std::endl;
+        std::cout << "Transaction rolled back: " << fromAccount->getId() << " -> " 
+                  << toAccount->getId() << " amount: " << amount << std::endl;
     }
 }

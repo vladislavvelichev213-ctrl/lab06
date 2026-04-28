@@ -3,20 +3,21 @@
 
 #include <string>
 #include <ctime>
+#include "Account.h"
 
 class Transaction {
 private:
-    int fromId;
-    int toId;
+    Account* fromAccount;
+    Account* toAccount;
     double amount;
     std::time_t timestamp;
     std::string status;
 
 public:
-    Transaction(int fromId, int toId, double amount);
+    Transaction(Account* from, Account* to, double amount);
     
-    int getFromId() const;
-    int getToId() const;
+    Account* getFromAccount() const;
+    Account* getToAccount() const;
     double getAmount() const;
     std::time_t getTimestamp() const;
     std::string getStatus() const;
