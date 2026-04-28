@@ -18,7 +18,8 @@ if(BUILD_TESTS)
     file(GLOB BANKING_TEST_SOURCES tests/*.cpp)
     add_executable(banking_check ${BANKING_TEST_SOURCES})
     
-    target_link_libraries(banking_check banking gtest_main)
+    # Добавляем gmock в линковку
+    target_link_libraries(banking_check banking gtest_main gmock)
     target_include_directories(banking_check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     
     add_test(NAME banking_check COMMAND banking_check)
