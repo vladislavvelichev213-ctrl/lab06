@@ -7,6 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(BUILD_EXAMPLES "Build examples" OFF)
 option(BUILD_TESTS "Build tests" OFF)
 
+# Отключаем -Werror для всех целей
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error")
+
 add_library(print STATIC sources/print.cpp)
 
 target_include_directories(print PUBLIC
@@ -37,7 +40,5 @@ if(BUILD_TESTS)
   add_test(NAME check COMMAND check)
 endif()
 
-# Отключаем -Werror для GTest
-if(BUILD_TESTS)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error")
-endif()
+# Banking library
+add_subdirectory(banking)
