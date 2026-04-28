@@ -15,6 +15,12 @@ if(BUILD_TESTS)
     
     add_subdirectory(../third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
     
+    # Отключаем Werror для всех целей GTest
+    target_compile_options(gtest PRIVATE -Wno-error)
+    target_compile_options(gtest_main PRIVATE -Wno-error)
+    target_compile_options(gmock PRIVATE -Wno-error)
+    target_compile_options(gmock_main PRIVATE -Wno-error)
+    
     file(GLOB BANKING_TEST_SOURCES tests/*.cpp)
     add_executable(banking_check ${BANKING_TEST_SOURCES})
     
