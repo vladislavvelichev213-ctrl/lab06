@@ -8,8 +8,8 @@ public:
     MockAccount(int id, const std::string& name, double balance) 
         : Account(id, name, balance) {}
     
-    MOCK_METHOD(void, withdraw, (double amount), (override));
-    MOCK_METHOD(void, deposit, (double amount), (override));
+    MOCK_METHOD1(withdraw, void(double amount));
+    MOCK_METHOD1(deposit, void(double amount));
 };
 
 TEST(TransactionMockTest, ExecuteCallsWithdrawAndDeposit) {
