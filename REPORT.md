@@ -202,3 +202,33 @@ $ git push origin main
 - [DEB](https://cmake.org/cmake/help/latest/cpack_gen/deb.html)
 - [RPM](https://cmake.org/cmake/help/latest/cpack_gen/rpm.html)
 - [NSIS](https://cmake.org/cmake/help/latest/cpack_gen/nsis.html)
+
+## Homework
+
+### Solver Application
+Created `solver.cpp` — simple C++ application.
+
+### CMakeLists.txt additions
+
+### GitHub Actions CI/CD
+Workflow `.github/workflows/release.yml` automatically builds packages on tags `v*`:
+- **TGZ** — source archive
+- **DEB** — Debian/Ubuntu package
+- **RPM** — Red Hat/Fedora package
+
+### Release
+Tag `v0.2.0.2` triggered automatic build and release:
+- https://github.com/vladislavvelichev213-ctrl/lab06/releases
+
+Packages in release:
+- lab05-1.16.0-Linux.deb
+- lab05-1.16.0-Linux.rpm
+- lab05-1.16.0-Linux.tar.gz
+
+### Full terminal log
+See `terminal_log.txt` in repository.
+
+### Links
+- [CPack DEB](https://cmake.org/cmake/help/latest/cpack_gen/deb.html)
+- [CPack RPM](https://cmake.org/cmake/help/latest/cpack_gen/rpm.html)
+- [CPack TGZ](https://cmake.org/cmake/help/latest/cpack_gen/tgz.html)

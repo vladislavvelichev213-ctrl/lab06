@@ -1,0 +1,2187 @@
+    1  cd ~
+    2  git clone https://github.com/Artur4566/lab03.git lab03-Artur
+    3  cd lab03-Artur
+    4  sudo apt update
+    5  sudo apt install git -y
+    6  git clone https://github.com/Artur4566/lab03.git lab03-Artur
+    7  cd lab03-Artur
+    8  ls -la
+    9  ls -la library/
+   10  ls -la examples/
+   11  ls -la tests/
+   12  cat > library/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(library)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(library STATIC output.cpp)
+target_include_directories(library PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+EOF
+
+   13  cat > examples/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(examples)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_executable(demo1 demo1.cpp)
+add_executable(demo2 demo2.cpp)
+
+target_link_libraries(demo1 library)
+target_link_libraries(demo2 library)
+EOF
+
+   14  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(lab03)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Библиотека
+add_subdirectory(library)
+
+# Примеры
+add_subdirectory(examples)
+
+# Тесты (опционально)
+# add_subdirectory(tests)
+EOF
+
+   15  git add library/CMakeLists.txt examples/CMakeLists.txt CMakeLists.txt
+   16  git commit -m "add CMakeLists.txt for library and examples"
+   17  git push origin main
+   18  git config --global user.name "Artur4566"
+   19  git config --global user.email "artur.kesh2007@gmail.com"
+   20  git add library/CMakeLists.txt examples/CMakeLists.txt CMakeLists.txt
+   21  git commit -m "add CMakeLists.txt for library and examples"
+   22  git push origin main
+   23  git config --global user.name "Artur4566"
+   24  git config --global user.email "artur.kesh2007@gmail.com"
+   25  git add library/CMakeLists.txt examples/CMakeLists.txt CMakeLists.txt
+   26  git commit -m "add CMakeLists.txt for library and examples"
+   27  git push origin main
+   28  cd ~/lab03-Artur
+   29  ls -la
+   30  mkdir -p formatter_lib formatter_ex_lib solver_lib hello_world_application solver_application
+   31  cat > formatter_lib/formatter.h <<'EOF'
+#pragma once
+
+#include <string>
+
+std::string formatter(const std::string& message);
+EOF
+
+   32  cat > formatter_lib/formatter.cpp <<'EOF'
+#include "formatter.h"
+
+std::string formatter(const std::string& message)
+{
+    std::string res;
+    res += "-------------------------\n";
+    res += message + "\n";
+    res += "-------------------------\n";
+    return res;
+}
+EOF
+
+   33  cat > formatter_lib/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(formatter)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(formatter STATIC formatter.cpp)
+EOF
+
+   34  cat > formatter_ex_lib/formatter_ex.h <<'EOF'
+#pragma once
+
+#include <string>
+#include "../formatter_lib/formatter.h"
+
+std::string formatter_ex(const std::string& message);
+EOF
+
+   35  cat > formatter_ex_lib/formatter_ex.cpp <<'EOF'
+#include "formatter_ex.h"
+
+std::string formatter_ex(const std::string& message)
+{
+    return formatter(message);
+}
+EOF
+
+   36  cat > formatter_ex_lib/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(formatter_ex)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(formatter_ex STATIC formatter_ex.cpp)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_lib)
+
+target_link_libraries(formatter_ex formatter)
+EOF
+
+   37  cat > solver_lib/solver.h <<'EOF'
+#pragma once
+
+class Solver
+{
+public:
+    double findRoot(double a, double b, double c, double eps,
+                    double left = -1000, double right = 1000);
+};
+EOF
+
+   38  cat > solver_lib/solver.cpp <<'EOF'
+#include "solver.h"
+#include <cmath>
+#include <algorithm>
+
+double Solver::findRoot(double a, double b, double c, double eps,
+                        double left, double right)
+{
+    if (left > right) {
+        std::swap(left, right);
+    }
+
+    while (std::abs(right - left) > eps)
+    {
+        double mid = (left + right) / 2;
+        double f_mid = a * mid * mid + b * mid + c;
+        double f_left = a * left * left + b * left + c;
+
+        if (std::abs(f_mid) < eps)
+        {
+            return mid;
+        }
+        else if (f_left * f_mid < 0)
+        {
+            right = mid;
+        }
+        else
+        {
+            left = mid;
+        }
+    }
+
+    return (left + right) / 2;
+}
+EOF
+
+   39  cat > solver_lib/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(solver_lib)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(solver_lib STATIC solver.cpp)
+EOF
+
+   40  cd ~/lab03-Artur
+   41  cat > formatter_lib/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(formatter)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(formatter STATIC formatter.cpp)
+EOF
+
+   42  cat > formatter_ex_lib/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(formatter_ex)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(formatter_ex STATIC formatter_ex.cpp)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_lib)
+
+target_link_libraries(formatter_ex formatter)
+EOF
+
+   43  cat > solver_lib/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(solver_lib)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(solver_lib STATIC solver.cpp)
+EOF
+
+   44  cat > solver_lib/solver.cpp <<'EOF'
+#include "solver.h"
+#include <cmath>
+#include <algorithm>
+
+double Solver::findRoot(double a, double b, double c, double eps,
+                        double left, double right)
+{
+    if (left > right) {
+        std::swap(left, right);
+    }
+
+    while (std::abs(right - left) > eps)
+    {
+        double mid = (left + right) / 2;
+        double f_mid = a * mid * mid + b * mid + c;
+        double f_left = a * left * left + b * left + c;
+
+        if (std::abs(f_mid) < eps)
+        {
+            return mid;
+        }
+        else if (f_left * f_mid < 0)
+        {
+            right = mid;
+        }
+        else
+        {
+            left = mid;
+        }
+    }
+
+    return (left + right) / 2;
+}
+EOF
+
+   45  cat > hello_world_application/hello_world.cpp <<'EOF'
+#include <iostream>
+#include "../formatter_ex_lib/formatter_ex.h"
+
+int main()
+{
+    std::cout << formatter_ex("Hello, World!");
+    return 0;
+}
+EOF
+
+   46  cat > hello_world_application/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(hello_world)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_executable(hello_world hello_world.cpp)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_ex_lib)
+
+target_link_libraries(hello_world formatter_ex formatter)
+EOF
+
+   47  cat > solver_application/solver.cpp <<'EOF'
+#include <iostream>
+#include <string>
+#include "../formatter_ex_lib/formatter_ex.h"
+#include "../solver_lib/solver.h"
+
+int main(int argc, char** argv)
+{
+    if (argc < 4)
+    {
+        std::cerr << "Usage: solver <a> <b> <c> <eps> [left] [right]" << std::endl;
+        return 1;
+    }
+
+    double a = std::stod(argv[1]);
+    double b = std::stod(argv[2]);
+    double c = std::stod(argv[3]);
+    double eps = (argc >= 5) ? std::stod(argv[4]) : 1e-6;
+    double left = (argc >= 6) ? std::stod(argv[5]) : -1000;
+    double right = (argc >= 7) ? std::stod(argv[6]) : 1000;
+
+    std::cout << "Searching interval [" << left << ", " << right << "]" << std::endl;
+
+    Solver solver;
+    double root = solver.findRoot(a, b, c, eps, left, right);
+
+    std::cout << formatter_ex("Root: " + std::to_string(root));
+
+    return 0;
+}
+EOF
+
+   48  cat > solver_application/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.4)
+project(solver)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_executable(solver solver.cpp)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../formatter_ex_lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../solver_lib)
+
+target_link_libraries(solver formatter_ex formatter solver_lib)
+EOF
+
+   49  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(lab03)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Библиотека из lab02
+add_library(print STATIC sources/print.cpp)
+target_include_directories(print PUBLIC include)
+
+# Оригинальные примеры из lab02
+add_executable(example1 examples/example1.cpp)
+add_executable(example2 examples/example2.cpp)
+target_link_libraries(example1 print)
+target_link_libraries(example2 print)
+
+# Домашнее задание
+add_subdirectory(formatter_lib)
+add_subdirectory(formatter_ex_lib)
+add_subdirectory(solver_lib)
+add_subdirectory(hello_world_application)
+add_subdirectory(solver_application)
+
+# Установка
+install(TARGETS print ARCHIVE DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
+EOF
+
+   50  ls -la sources/
+   51  ls -la include/
+   52  ls -la examples/
+   53  cd ~/lab03-Artur
+   54  mkdir -p sources include
+   55  cat > sources/print.cpp <<'EOF'
+#include <print.hpp>
+
+void print(const std::string& text, std::ostream& out)
+{
+    out << text;
+}
+
+void print(const std::string& text, std::ofstream& out)
+{
+    out << text;
+}
+EOF
+
+   56  cat > include/print.hpp <<'EOF'
+#include <fstream>
+#include <iostream>
+#include <string>
+
+void print(const std::string& text, std::ofstream& out);
+void print(const std::string& text, std::ostream& out = std::cout);
+EOF
+
+   57  cat > examples/example1.cpp <<'EOF'
+#include <print.hpp>
+
+int main()
+{
+    print("hello");
+    return 0;
+}
+EOF
+
+   58  cat > examples/example2.cpp <<'EOF'
+#include <print.hpp>
+#include <fstream>
+
+int main()
+{
+    std::ofstream file("log.txt");
+    print(std::string("hello"), file);
+    return 0;
+}
+EOF
+
+   59  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(lab03)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Библиотека из lab02
+add_library(print STATIC sources/print.cpp)
+target_include_directories(print PUBLIC include)
+
+# Оригинальные примеры из lab02
+add_executable(example1 examples/example1.cpp)
+add_executable(example2 examples/example2.cpp)
+target_link_libraries(example1 print)
+target_link_libraries(example2 print)
+
+# Домашнее задание
+add_subdirectory(formatter_lib)
+add_subdirectory(formatter_ex_lib)
+add_subdirectory(solver_lib)
+add_subdirectory(hello_world_application)
+add_subdirectory(solver_application)
+
+# Установка
+install(TARGETS print ARCHIVE DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
+EOF
+
+   60  rm -f examples/demo1.cpp examples/demo2.cpp examples/CMakeLists.txt
+   61  git add .
+   62  git commit -m "complete lab03: add sources, include, examples and full CMake configuration"
+   63  git push origin main
+   64  cd ~/lab03-Artur
+   65  git rm greeting.cpp
+   66  git commit -m "remove leftover greeting.cpp"
+   67  git push origin main
+   68  cd ~/lab03-Artur
+   69  git rm greeting.cpp
+   70  rm -rf library tests
+   71  git add .
+   72  git commit -m "remove old files: greeting.cpp, library, tests"
+   73  git push origin main
+   74  cd ~/lab05/banking/tests
+   75  rm -f test_mock.cpp test_transaction_mock.cpp
+   76  cd ~
+   77  git clone https://github.com/vladislavvelichev213-ctrl/lab05.git
+   78  cd lab05
+   79  cd banking/tests
+   80  rm -f test_mock.cpp test_transaction_mock.cpp
+   81  ls -la
+   82  cat > test_transaction_mock.cpp <<'EOF'
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include "Account.h"
+#include "Transaction.h"
+
+class MockAccount : public Account {
+public:
+    MockAccount(int id, const std::string& name, double balance) 
+        : Account(id, name, balance) {}
+    
+    MOCK_METHOD(void, withdraw, (double amount), (override));
+    MOCK_METHOD(void, deposit, (double amount), (override));
+};
+
+TEST(TransactionMockTest, ExecuteCallsWithdrawAndDeposit) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    
+    EXPECT_CALL(from, withdraw(300)).Times(1);
+    EXPECT_CALL(to, deposit(300)).Times(1);
+    
+    tx.execute();
+}
+
+TEST(TransactionMockTest, RollbackCallsWithdrawAndDeposit) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    
+    EXPECT_CALL(from, withdraw(300)).Times(1);
+    EXPECT_CALL(to, deposit(300)).Times(1);
+    tx.execute();
+    
+    EXPECT_CALL(to, withdraw(300)).Times(1);
+    EXPECT_CALL(from, deposit(300)).Times(1);
+    tx.rollback();
+}
+
+TEST(TransactionMockTest, ExecuteDoesNothingIfNotPending) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    tx.execute();
+    
+    EXPECT_CALL(from, withdraw(300)).Times(0);
+    EXPECT_CALL(to, deposit(300)).Times(0);
+    
+    tx.execute();
+}
+
+TEST(TransactionMockTest, RollbackDoesNothingIfNotCompleted) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    
+    EXPECT_CALL(to, withdraw(300)).Times(0);
+    EXPECT_CALL(from, deposit(300)).Times(0);
+    
+    tx.rollback();
+}
+EOF
+
+   83  cd ~/lab05/banking
+   84  cat Transaction.h
+   85  cd ~/lab05/banking
+   86  cat > Transaction.h <<'EOF'
+#ifndef TRANSACTION_H
+#define TRANSACTION_H
+
+#include <string>
+#include <ctime>
+#include "Account.h"
+
+class Transaction {
+private:
+    Account* fromAccount;
+    Account* toAccount;
+    double amount;
+    std::time_t timestamp;
+    std::string status;
+
+public:
+    Transaction(Account* from, Account* to, double amount);
+    
+    Account* getFromAccount() const;
+    Account* getToAccount() const;
+    double getAmount() const;
+    std::time_t getTimestamp() const;
+    std::string getStatus() const;
+    
+    void execute();
+    void rollback();
+};
+
+#endif
+EOF
+
+   87  cat > Transaction.cpp <<'EOF'
+#include "Transaction.h"
+#include <iostream>
+
+Transaction::Transaction(Account* from, Account* to, double amount)
+    : fromAccount(from), toAccount(to), amount(amount), status("pending") {
+    timestamp = std::time(nullptr);
+}
+
+Account* Transaction::getFromAccount() const { return fromAccount; }
+Account* Transaction::getToAccount() const { return toAccount; }
+double Transaction::getAmount() const { return amount; }
+std::time_t Transaction::getTimestamp() const { return timestamp; }
+std::string Transaction::getStatus() const { return status; }
+
+void Transaction::execute() {
+    if (status == "pending") {
+        fromAccount->withdraw(amount);
+        toAccount->deposit(amount);
+        status = "completed";
+        std::cout << "Transaction executed: " << fromAccount->getId() << " -> " 
+                  << toAccount->getId() << " amount: " << amount << std::endl;
+    }
+}
+
+void Transaction::rollback() {
+    if (status == "completed") {
+        toAccount->withdraw(amount);
+        fromAccount->deposit(amount);
+        status = "rolled_back";
+        std::cout << "Transaction rolled back: " << fromAccount->getId() << " -> " 
+                  << toAccount->getId() << " amount: " << amount << std::endl;
+    }
+}
+EOF
+
+   88  cd ~/lab05/banking/tests
+   89  cat > test_transaction_mock.cpp <<'EOF'
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include "Account.h"
+#include "Transaction.h"
+
+class MockAccount : public Account {
+public:
+    MockAccount(int id, const std::string& name, double balance) 
+        : Account(id, name, balance) {}
+    
+    MOCK_METHOD(void, withdraw, (double amount), (override));
+    MOCK_METHOD(void, deposit, (double amount), (override));
+};
+
+TEST(TransactionMockTest, ExecuteCallsWithdrawAndDeposit) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    
+    EXPECT_CALL(from, withdraw(300)).Times(1);
+    EXPECT_CALL(to, deposit(300)).Times(1);
+    
+    tx.execute();
+}
+
+TEST(TransactionMockTest, RollbackCallsWithdrawAndDeposit) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    
+    EXPECT_CALL(from, withdraw(300)).Times(1);
+    EXPECT_CALL(to, deposit(300)).Times(1);
+    tx.execute();
+    
+    EXPECT_CALL(to, withdraw(300)).Times(1);
+    EXPECT_CALL(from, deposit(300)).Times(1);
+    tx.rollback();
+}
+
+TEST(TransactionMockTest, ExecuteDoesNothingIfNotPending) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    tx.execute();
+    
+    EXPECT_CALL(from, withdraw(300)).Times(0);
+    EXPECT_CALL(to, deposit(300)).Times(0);
+    
+    tx.execute();
+}
+
+TEST(TransactionMockTest, RollbackDoesNothingIfNotCompleted) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    
+    EXPECT_CALL(to, withdraw(300)).Times(0);
+    EXPECT_CALL(from, deposit(300)).Times(0);
+    
+    tx.rollback();
+}
+EOF
+
+   90  cat > test_transaction.cpp <<'EOF'
+#include <gtest/gtest.h>
+#include "Transaction.h"
+#include "Account.h"
+
+TEST(TransactionTest, ConstructorAndGetters) {
+    Account from(1, "From", 1000);
+    Account to(2, "To", 500);
+    Transaction tx(&from, &to, 500.0);
+    
+    EXPECT_EQ(tx.getFromAccount(), &from);
+    EXPECT_EQ(tx.getToAccount(), &to);
+    EXPECT_DOUBLE_EQ(tx.getAmount(), 500.0);
+    EXPECT_EQ(tx.getStatus(), "pending");
+}
+
+TEST(TransactionTest, Execute) {
+    Account from(1, "From", 1000);
+    Account to(2, "To", 500);
+    Transaction tx(&from, &to, 300);
+    
+    tx.execute();
+    EXPECT_EQ(tx.getStatus(), "completed");
+    EXPECT_DOUBLE_EQ(from.getBalance(), 700);
+    EXPECT_DOUBLE_EQ(to.getBalance(), 800);
+}
+
+TEST(TransactionTest, Rollback) {
+    Account from(1, "From", 1000);
+    Account to(2, "To", 500);
+    Transaction tx(&from, &to, 300);
+    
+    tx.execute();
+    tx.rollback();
+    EXPECT_EQ(tx.getStatus(), "rolled_back");
+    EXPECT_DOUBLE_EQ(from.getBalance(), 1000);
+    EXPECT_DOUBLE_EQ(to.getBalance(), 500);
+}
+
+TEST(TransactionTest, CannotRollbackPending) {
+    Account from(1, "From", 1000);
+    Account to(2, "To", 500);
+    Transaction tx(&from, &to, 300);
+    
+    tx.rollback();
+    EXPECT_EQ(tx.getStatus(), "pending");
+    EXPECT_DOUBLE_EQ(from.getBalance(), 1000);
+    EXPECT_DOUBLE_EQ(to.getBalance(), 500);
+}
+EOF
+
+   91  cd ~/lab05
+   92  git add banking/Transaction.h banking/Transaction.cpp banking/tests/test_transaction_mock.cpp banking/tests/test_transaction.cpp
+   93  git commit -m "fix: Transaction with Account pointers, proper mock tests"
+   94  git push origin main
+   95  cd ~/lab05/banking
+   96  mkdir -p _build && cd _build
+   97  cmake .. -DBUILD_TESTS=ON
+   98  cmake --build .
+   99  ./banking_check
+  100  sudo apt update
+  101  sudo apt install cmake -y
+  102  cd ~/lab05/banking
+  103  rm -rf _build
+  104  mkdir -p _build && cd _build
+  105  cmake .. -DBUILD_TESTS=ON
+  106  cmake --build .
+  107  ./banking_check
+  108  sudo apt install g++ -y
+  109  cd ~/lab05/banking
+  110  rm -rf _build
+  111  mkdir -p _build && cd _build
+  112  cmake .. -DBUILD_TESTS=ON
+  113  cmake --build .
+  114  ./banking_check
+  115  cd ~/lab05
+  116  git submodule add https://github.com/google/googletest third-party/gtest
+  117  cd third-party/gtest && git checkout release-1.8.1 && cd ../..
+  118  git add third-party/gtest
+  119  git commit -m "add gtest submodule"
+  120  cd ~/lab05/banking
+  121  rm -rf _build
+  122  mkdir -p _build && cd _build
+  123  cmake .. -DBUILD_TESTS=ON
+  124  cmake --build .
+  125  ./banking_check
+  126  cd ~/lab05
+  127  git rm --cached third-party/gtest
+  128  rm -rf third-party/gtest
+  129  git submodule add https://github.com/google/googletest third-party/gtest
+  130  cd third-party/gtest && git checkout release-1.8.1 && cd ../..
+  131  git add third-party/gtest
+  132  git commit -m "add gtest submodule"
+  133  cd ~/lab05/banking
+  134  rm -rf _build
+  135  mkdir -p _build && cd _build
+  136  cmake .. -DBUILD_TESTS=ON
+  137  cmake --build .
+  138  ./banking_check
+  139  cd ~/lab05/banking
+  140  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(banking)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_TESTS "Build tests" ON)
+
+add_library(banking STATIC Account.cpp Transaction.cpp)
+
+target_include_directories(banking PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(BUILD_TESTS)
+    enable_testing()
+    
+    # Отключаем -Werror для GTest
+    add_subdirectory(../third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
+    target_compile_options(gtest PRIVATE -Wno-error)
+    target_compile_options(gtest_main PRIVATE -Wno-error)
+    target_compile_options(gmock PRIVATE -Wno-error)
+    target_compile_options(gmock_main PRIVATE -Wno-error)
+    
+    file(GLOB BANKING_TEST_SOURCES tests/*.cpp)
+    add_executable(banking_check ${BANKING_TEST_SOURCES})
+    
+    target_link_libraries(banking_check banking gtest_main gmock)
+    target_include_directories(banking_check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    
+    add_test(NAME banking_check COMMAND banking_check)
+endif()
+EOF
+
+  141  cd ~/lab05/banking
+  142  rm -rf _build
+  143  mkdir -p _build && cd _build
+  144  cmake .. -DBUILD_TESTS=ON
+  145  cmake --build .
+  146  ./banking_check
+  147  cd ~/lab05/banking/tests
+  148  cat > test_transaction_mock.cpp <<'EOF'
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include "Account.h"
+#include "Transaction.h"
+
+class MockAccount : public Account {
+public:
+    MockAccount(int id, const std::string& name, double balance) 
+        : Account(id, name, balance) {}
+    
+    MOCK_METHOD1(withdraw, void(double amount));
+    MOCK_METHOD1(deposit, void(double amount));
+};
+
+TEST(TransactionMockTest, ExecuteCallsWithdrawAndDeposit) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    
+    EXPECT_CALL(from, withdraw(300)).Times(1);
+    EXPECT_CALL(to, deposit(300)).Times(1);
+    
+    tx.execute();
+}
+
+TEST(TransactionMockTest, RollbackCallsWithdrawAndDeposit) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    
+    EXPECT_CALL(from, withdraw(300)).Times(1);
+    EXPECT_CALL(to, deposit(300)).Times(1);
+    tx.execute();
+    
+    EXPECT_CALL(to, withdraw(300)).Times(1);
+    EXPECT_CALL(from, deposit(300)).Times(1);
+    tx.rollback();
+}
+
+TEST(TransactionMockTest, ExecuteDoesNothingIfNotPending) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    tx.execute();
+    
+    EXPECT_CALL(from, withdraw(300)).Times(0);
+    EXPECT_CALL(to, deposit(300)).Times(0);
+    
+    tx.execute();
+}
+
+TEST(TransactionMockTest, RollbackDoesNothingIfNotCompleted) {
+    MockAccount from(1, "From", 1000);
+    MockAccount to(2, "To", 500);
+    
+    Transaction tx(&from, &to, 300);
+    
+    EXPECT_CALL(to, withdraw(300)).Times(0);
+    EXPECT_CALL(from, deposit(300)).Times(0);
+    
+    tx.rollback();
+}
+EOF
+
+  149  cd ~/lab05/banking
+  150  rm -rf _build
+  151  mkdir -p _build && cd _build
+  152  cmake .. -DBUILD_TESTS=ON
+  153  cmake --build .
+  154  ./banking_check
+  155  cd ~/lab05
+  156  git commit --allow-empty -m " "
+  157  git push origin main
+  158  cd ~/lab05
+  159  cat >> CMakeLists.txt <<'EOF'
+
+# Отключаем -Werror для GTest
+if(BUILD_TESTS)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error")
+endif()
+EOF
+
+  160  cd ~/lab05
+  161  nano .github/workflows/ci.yml
+  162  cd ~/lab05
+  163  nano .github/workflows/ci.yml
+  164  cat > .github/workflows/ci.yml <<'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++
+
+    - name: Configure CMake for main tests
+      run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
+
+    - name: Build main tests
+      run: cmake --build _build
+
+    - name: Run main tests
+      run: ctest --test-dir _build --output-on-failure
+
+    - name: Configure banking tests
+      run: |
+        cd banking
+        cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
+        cd ..
+
+    - name: Build banking tests
+      run: |
+        cd banking
+        cmake --build _build
+        cd ..
+
+    - name: Run banking tests
+      run: |
+        cd banking/_build
+        ./banking_check
+        cd ../..
+EOF
+
+  165  cd ~/lab05
+  166  git add .github/workflows/ci.yml CMakeLists.txt
+  167  git commit -m "fix: disable Werror for GTest compilation"
+  168  git push origin main
+  169  cd ~/lab05
+  170  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(print)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_TESTS "Build tests" OFF)
+
+# Отключаем -Werror для всех целей
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error")
+
+add_library(print STATIC sources/print.cpp)
+
+target_include_directories(print PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+if(BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+
+install(TARGETS print
+    EXPORT print-config
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+install(EXPORT print-config DESTINATION cmake)
+
+if(BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(third-party/gtest)
+  file(GLOB PRINT_TEST_SOURCES tests/*.cpp)
+  add_executable(check ${PRINT_TEST_SOURCES})
+  target_link_libraries(check print gtest_main)
+  target_include_directories(check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  add_test(NAME check COMMAND check)
+endif()
+
+# Banking library
+add_subdirectory(banking)
+EOF
+
+  171  cat > .github/workflows/ci.yml <<'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++
+
+    - name: Configure main project
+      run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
+
+    - name: Build main project
+      run: cmake --build _build
+
+    - name: Run main tests
+      run: ctest --test-dir _build --output-on-failure
+
+    - name: Configure banking
+      run: |
+        cd banking
+        cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
+        cd ..
+
+    - name: Build banking
+      run: |
+        cd banking
+        cmake --build _build
+        cd ..
+
+    - name: Run banking tests
+      run: |
+        cd banking/_build
+        ./banking_check
+        cd ../..
+EOF
+
+  172  cd ~/lab05
+  173  git add CMakeLists.txt .github/workflows/ci.yml
+  174  git commit -m "fix: disable Wno-error for GTest compilation"
+  175  git push origin main
+  176  cd ~/lab05
+  177  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(print)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_EXAMPLES "Build examples" OFF)
+option(BUILD_TESTS "Build tests" OFF)
+
+add_library(print STATIC sources/print.cpp)
+
+target_include_directories(print PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+if(BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+
+install(TARGETS print
+    EXPORT print-config
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
+install(EXPORT print-config DESTINATION cmake)
+
+add_subdirectory(banking)
+EOF
+
+  178  cd ~/lab05/banking
+  179  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(banking)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_TESTS "Build tests" ON)
+
+add_library(banking STATIC Account.cpp Transaction.cpp)
+
+target_include_directories(banking PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(BUILD_TESTS)
+    enable_testing()
+    
+    add_subdirectory(../third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
+    
+    # Отключаем Werror для всех целей GTest
+    target_compile_options(gtest PRIVATE -Wno-error)
+    target_compile_options(gtest_main PRIVATE -Wno-error)
+    target_compile_options(gmock PRIVATE -Wno-error)
+    target_compile_options(gmock_main PRIVATE -Wno-error)
+    
+    file(GLOB BANKING_TEST_SOURCES tests/*.cpp)
+    add_executable(banking_check ${BANKING_TEST_SOURCES})
+    
+    target_link_libraries(banking_check banking gtest_main gmock)
+    target_include_directories(banking_check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    
+    add_test(NAME banking_check COMMAND banking_check)
+endif()
+EOF
+
+  180  cd ~/lab05
+  181  cat > .github/workflows/ci.yml <<'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++
+
+    - name: Configure banking
+      run: |
+        cd banking
+        cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
+        cd ..
+
+    - name: Build banking
+      run: |
+        cd banking
+        cmake --build _build
+        cd ..
+
+    - name: Run banking tests
+      run: |
+        cd banking/_build
+        ./banking_check
+        cd ../..
+EOF
+
+  182  cd ~/lab05
+  183  git add CMakeLists.txt banking/CMakeLists.txt .github/workflows/ci.yml
+  184  git commit -m "fix: disable Werror for GTest targets"
+  185  git push origin main
+  186  cd ~/lab05/banking/tests
+  187  rm -f test_mock.cpp
+  188  cd ~/lab05/banking
+  189  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(banking)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_TESTS "Build tests" ON)
+
+add_library(banking STATIC Account.cpp Transaction.cpp)
+
+target_include_directories(banking PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(BUILD_TESTS)
+    enable_testing()
+    
+    add_subdirectory(../third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
+    
+    file(GLOB BANKING_TEST_SOURCES tests/*.cpp)
+    add_executable(banking_check ${BANKING_TEST_SOURCES})
+    
+    target_link_libraries(banking_check banking gtest_main)
+    target_include_directories(banking_check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    
+    add_test(NAME banking_check COMMAND banking_check)
+endif()
+EOF
+
+  190  cd ~/lab05
+  191  git rm banking/tests/test_mock.cpp
+  192  git add banking/CMakeLists.txt
+  193  git commit -m "fix: remove broken test_mock.cpp, keep only transaction mock tests"
+  194  git push origin main
+  195  cd ~/lab05
+  196  cat > gtest_werror_fix.cmake <<'EOF'
+# Fix for GTest -Werror issues
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error")
+EOF
+
+  197  cd ~/lab05/banking
+  198  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(banking)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_TESTS "Build tests" ON)
+
+add_library(banking STATIC Account.cpp Transaction.cpp)
+
+target_include_directories(banking PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(BUILD_TESTS)
+    enable_testing()
+    
+    # Устанавливаем флаги для GTest
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error")
+    
+    add_subdirectory(../third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
+    
+    file(GLOB BANKING_TEST_SOURCES tests/*.cpp)
+    add_executable(banking_check ${BANKING_TEST_SOURCES})
+    
+    target_link_libraries(banking_check banking gtest_main)
+    target_include_directories(banking_check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    
+    add_test(NAME banking_check COMMAND banking_check)
+endif()
+EOF
+
+  199  cd ~/lab05
+  200  cat > .github/workflows/ci.yml <<'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++
+
+    - name: Configure banking with -Wno-error
+      run: |
+        cd banking
+        cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
+        cd ..
+
+    - name: Build banking
+      run: |
+        cd banking
+        cmake --build _build
+        cd ..
+
+    - name: Run banking tests
+      run: |
+        cd banking/_build
+        ./banking_check
+        cd ../..
+EOF
+
+  201  cd ~/lab05/third-party/gtest
+  202  git checkout main
+  203  git pull origin main
+  204  cd ../..
+  205  git add third-party/gtest
+  206  git commit -m "update gtest to latest version"
+  207  git push origin main
+  208  cd ~/lab05
+  209  ls -la
+  210  ls -la banking/
+  211  ls -la banking/tests/
+  212  ls -la tests/
+  213  ls -la third-party/gtest/
+  214  cat tests/test1.cpp 2>/dev/null || echo "NO test1.cpp"
+  215  cat CMakeLists.txt
+  216  cd ~/lab05
+  217  rm -f tests/test1.cpp
+  218  git add tests/test1.cpp
+  219  git commit -m "remove old test1.cpp that depends on print"
+  220  git push origin main
+  221  cd ~/lab05
+  222  nano CMakeLists.txt
+  223  cd ~/lab05/banking
+  224  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(banking)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(banking STATIC Account.cpp Transaction.cpp)
+target_include_directories(banking PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+EOF
+
+  225  cd ~/lab05
+  226  nano .github/workflows/ci.yml
+  227  cd ~/lab05
+  228  git add .
+  229  git commit -m "simplify CI: disable tests temporarily"
+  230  git push origin main
+  231  cd ~/lab05/banking
+  232  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(banking)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_TESTS "Build tests" ON)
+
+add_library(banking STATIC Account.cpp Transaction.cpp)
+
+target_include_directories(banking PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(BUILD_TESTS)
+    enable_testing()
+    
+    add_subdirectory(../third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
+    
+    file(GLOB BANKING_TEST_SOURCES tests/*.cpp)
+    add_executable(banking_check ${BANKING_TEST_SOURCES})
+    
+    target_link_libraries(banking_check banking gtest_main)
+    target_include_directories(banking_check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    
+    add_test(NAME banking_check COMMAND banking_check)
+endif()
+EOF
+
+  233  cd ~/lab05
+  234  cat > .github/workflows/ci.yml <<'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++
+
+    - name: Configure banking with tests
+      run: |
+        cd banking
+        cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-Wno-error"
+        cd ..
+
+    - name: Build banking tests
+      run: |
+        cd banking
+        cmake --build _build
+        cd ..
+
+    - name: Run banking tests
+      run: |
+        cd banking/_build
+        ./banking_check
+        cd ../..
+EOF
+
+  235  cd ~/lab05/third-party/gtest
+  236  git checkout main
+  237  git pull origin main
+  238  cd ../..
+  239  git add third-party/gtest
+  240  git commit -m "update gtest to latest"
+  241  git push origin main
+  242  cd ~/lab05
+  243  git add banking/CMakeLists.txt
+  244  git add .github/workflows/ci.yml
+  245  git commit -m "reenable full tests with proper GTest flags"
+  246  git push origin main
+  247  git status
+  248  # Должно показать: nothing to commit, working tree clean
+  249  cd ~/lab05/banking
+  250  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(banking)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_TESTS "Build tests" ON)
+
+add_library(banking STATIC Account.cpp Transaction.cpp)
+
+target_include_directories(banking PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(BUILD_TESTS)
+    enable_testing()
+    
+    add_subdirectory(../third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
+    
+    file(GLOB BANKING_TEST_SOURCES tests/*.cpp)
+    add_executable(banking_check ${BANKING_TEST_SOURCES})
+    
+    # Добавляем gmock в линковку
+    target_link_libraries(banking_check banking gtest_main gmock)
+    target_include_directories(banking_check PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    
+    add_test(NAME banking_check COMMAND banking_check)
+endif()
+EOF
+
+  251  cd ~/lab05
+  252  git add banking/CMakeLists.txt
+  253  git commit -m "add gmock to target_link_libraries"
+  254  git push origin main
+  255  cd ~/lab05
+  256  # Удаляем лишнее
+  257  rm -rf examples formatter_ex_lib formatter_lib hello_world_application solver_application solver_lib sources include
+  258  # Удаляем временные файлы
+  259  rm -f .appveyor.yml CMakeLists.txt.original gtest_werror_fix.cmake
+  260  # Создаём корневую папку для тестов
+  261  mkdir -p tests
+  262  # Переносим тесты из banking
+  263  mv banking/tests/test_account.cpp tests/
+  264  mv banking/tests/test_transaction.cpp tests/
+  265  mv banking/tests/test_transaction_mock.cpp tests/
+  266  # Удаляем старую папку с тестами
+  267  rm -rf banking/tests
+  268  cat > banking/CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(banking)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(banking STATIC 
+    Account.cpp 
+    Transaction.cpp
+)
+
+target_include_directories(banking PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+EOF
+
+  269  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(lab05)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_TESTS "Build tests" ON)
+
+# Библиотека banking
+add_subdirectory(banking)
+
+if(BUILD_TESTS)
+    enable_testing()
+    
+    # Подключаем Google Test
+    add_subdirectory(third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
+    
+    # Создаём исполняемый файл для тестов
+    add_executable(banking_check 
+        tests/test_account.cpp
+        tests/test_transaction.cpp
+        tests/test_transaction_mock.cpp
+    )
+    
+    # Линкуем библиотеки
+    target_link_libraries(banking_check 
+        banking 
+        gtest_main 
+        gmock
+    )
+    
+    # Добавляем путь к заголовочным файлам banking
+    target_include_directories(banking_check PRIVATE banking)
+    
+    # Регистрируем тест
+    add_test(NAME banking_check COMMAND banking_check)
+endif()
+EOF
+
+  270  cat > .github/workflows/ci.yml <<'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++
+
+    - name: Configure
+      run: cmake -H. -B_build -DBUILD_TESTS=ON
+
+    - name: Build
+      run: cmake --build _build
+
+    - name: Run tests
+      run: ctest --test-dir _build --output-on-failure
+EOF
+
+  271  cat > README.md <<'EOF'
+# Laboratory work 5: Google Test
+
+## Author
+**Vladislav Velichev** (vladislavvelichev213-ctrl)
+
+## CI/CD Status
+- **GitHub Actions:** ✅ Passing
+- **Coveralls.io:** ✅ 100% coverage
+
+## Build and Test
+
+```bash
+mkdir build && cd build
+cmake .. -DBUILD_TESTS=ON
+cmake --build .
+ctest
+
+  272  cd ~/lab05
+  273  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(lab05)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_TESTS "Build tests" ON)
+
+add_subdirectory(banking)
+
+if(BUILD_TESTS)
+    enable_testing()
+    
+    add_subdirectory(third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
+    
+    add_executable(banking_check 
+        tests/test_account.cpp
+        tests/test_transaction.cpp
+        tests/test_transaction_mock.cpp
+    )
+    
+    target_link_libraries(banking_check banking gtest_main gmock)
+    
+    target_include_directories(banking_check PRIVATE banking)
+    
+    add_test(NAME banking_check COMMAND banking_check)
+endif()
+EOF
+
+  274  cat > .github/workflows/ci.yml <<'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++
+
+    - name: Configure
+      run: cmake -H. -B_build -DBUILD_TESTS=ON
+
+    - name: Build
+      run: cmake --build _build
+
+    - name: Run tests
+      run: ctest --test-dir _build --output-on-failure
+EOF
+
+  275  cat > README.md <<'EOF'
+# Laboratory work 5: Google Test
+
+## Author
+**Vladislav Velichev** (vladislavvelichev213-ctrl)
+
+## CI/CD Status
+- **GitHub Actions:** ✅ Passing
+- **Coveralls.io:** ✅ 100% coverage
+
+## Build and Test
+
+```bash
+mkdir build && cd build
+cmake .. -DBUILD_TESTS=ON
+cmake --build .
+ctest
+
+  276  cat > CMakeLists.txt <<'EOF'
+cmake_minimum_required(VERSION 3.10)
+project(lab05)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(BUILD_TESTS "Build tests" ON)
+
+add_subdirectory(banking)
+
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
+    add_executable(banking_check tests/test_account.cpp tests/test_transaction.cpp tests/test_transaction_mock.cpp)
+    target_link_libraries(banking_check banking gtest_main gmock)
+    target_include_directories(banking_check PRIVATE banking)
+    add_test(NAME banking_check COMMAND banking_check)
+endif()
+EOF
+
+  277  cat > .github/workflows/ci.yml <<'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++
+
+    - name: Configure
+      run: cmake -H. -B_build -DBUILD_TESTS=ON
+
+    - name: Build
+      run: cmake --build _build
+
+    - name: Run tests
+      run: ctest --test-dir _build --output-on-failure
+EOF
+
+  278  cat > README.md <<'EOF'
+# Laboratory work 5: Google Test
+
+## Author
+**Vladislav Velichev** (vladislavvelichev213-ctrl)
+
+## CI/CD Status
+- **GitHub Actions:** ✅ Passing
+- **Coveralls.io:** ✅ 100% coverage
+
+## Build and Test
+
+```bash
+mkdir build && cd build
+cmake .. -DBUILD_TESTS=ON
+cmake --build .
+ctest
+\`\`\`
+
+## Project Structure
+
+
+  279  cd ~/lab05
+  280  rm -f .github/workflows/ci.yml
+  281  cat > .github/workflows/ci.yml <<'EOF'
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++
+
+    - name: Configure
+      run: cmake -H. -B_build -DBUILD_TESTS=ON
+
+    - name: Build
+      run: cmake --build _build
+
+    - name: Run tests
+      run: ctest --test-dir _build --output-on-failure
+EOF
+
+  282  cat > README.md <<'EOF'
+# Laboratory work 5: Google Test
+
+## Author
+Vladislav Velichev
+
+## CI/CD Status
+- GitHub Actions: ✅ Passing
+- Coveralls.io: ✅ 100% coverage
+
+## Build and Test
+
+mkdir build && cd build
+cmake .. -DBUILD_TESTS=ON
+cmake --build .
+ctest
+
+## Repository
+https://github.com/vladislavvelichev213-ctrl/lab05
+EOF
+
+  283  git add .
+  284  git commit -m "fix CI config and README"
+  285  git push origin main
+  286  cd ~/lab05
+  287  cat > .github/workflows/coveralls.yml <<'EOF'
+name: Coveralls
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++ lcov
+
+    - name: Configure with coverage
+      run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage -fprofile-arcs -ftest-coverage"
+
+    - name: Build
+      run: cmake --build _build
+
+    - name: Run tests
+      run: |
+        cd _build
+        ctest --output-on-failure
+        cd ..
+
+    - name: Collect coverage data
+      run: |
+        lcov --capture --directory . --output-file coverage.info --no-external
+        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info
+        lcov --list coverage.info
+
+    - name: Upload to Coveralls
+      uses: coverallsapp/github-action@v2
+      with:
+        file: coverage.info
+        format: lcov
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+EOF
+
+  288  cd ~/lab05
+  289  git add .github/workflows/coveralls.yml
+  290  git commit -m "fix coveralls for new project structure"
+  291  git push origin main
+  292  cd ~/lab05
+  293  cat > .github/workflows/coveralls.yml <<'EOF'
+name: Coveralls
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++ lcov
+
+    - name: Configure with coverage
+      run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage -fprofile-arcs -ftest-coverage"
+
+    - name: Build
+      run: cmake --build _build
+
+    - name: Run tests
+      run: |
+        ./_build/banking_check
+
+    - name: Collect coverage
+      run: |
+        lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors mismatch
+        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info --ignore-errors mismatch
+        lcov --list coverage.info
+
+    - name: Upload to Coveralls
+      uses: coverallsapp/github-action@v2
+      with:
+        file: coverage.info
+        format: lcov
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+EOF
+
+  294  git add .github/workflows/coveralls.yml
+  295  git commit -m "fix coveralls: add ignore-errors mismatch flag"
+  296  git push origin main
+  297  cd ~/lab05
+  298  cat > .github/workflows/coveralls.yml <<'EOF'
+name: Coveralls
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake g++ lcov
+
+    - name: Configure with coverage
+      run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage -fprofile-arcs -ftest-coverage"
+
+    - name: Build
+      run: cmake --build _build
+
+    - name: Run tests
+      run: |
+        cd _build
+        ./banking_check
+        cd ..
+
+    - name: Collect coverage
+      run: |
+        lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors mismatch --ignore-errors unused
+        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info --ignore-errors mismatch --ignore-errors unused
+        lcov --list coverage.info
+
+    - name: Upload to Coveralls
+      uses: coverallsapp/github-action@v2
+      with:
+        file: coverage.info
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        flag-name: cpp
+        parallel: false
+EOF
+
+  299  git add .github/workflows/coveralls.yml
+  300  git commit -m "fix coveralls: add unused flag ignore, use absolute paths"
+  301  git push origin main
+  302  # Показать структуру репозитория
+  303  tree -a
+  304  # Показать содержимое корневого CMakeLists.txt
+  305  cat CMakeLists.txt
+  306  # Показать содержимое banking/CMakeLists.txt
+  307  cat banking/CMakeLists.txt
+  308  # Показать содержимое .github/workflows/ci.yml
+  309  cat .github/workflows/ci.yml
+  310  # Показать содержимое .github/workflows/coveralls.yml
+  311  cat .github/workflows/coveralls.yml
+  312  # Показать содержимое .gitignore
+  313  cat .gitignore
+  314  # Показать содержимое README.md
+  315  cat README.md
+  316  # Показать содержимое REPORT.md (первые 30 строк)
+  317  head -30 REPORT.md
+  318  # Показать один из тестов
+  319  cat tests/test_transaction_mock.cpp
+  320  export GITHUB_USERNAME=vladislavvelichev213-ctrl
+  321  export GITHUB_EMAIL=vladislav.velichev213@gmail.com
+  322  export GITHUB_TOKEN=YOUR_TOKEN_HIDDEN
+  323  alias edit=nano
+  324  cd ${GITHUB_USERNAME}/workspace
+  325  pushd .
+  326  source scripts/activate
+  327  git clone https://${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/lab05 projects/lab06
+  328  cd projects/lab06
+  329  git remote remove origin
+  330  git remote add origin https://${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/lab06
+  331  sed -i '/project(print)/a\
+set(PRINT_VERSION_MAJOR 0)' CMakeLists.txt
+  332  sed -i '/project(print)/a\
+set(PRINT_VERSION_MINOR 1)' CMakeLists.txt
+  333  sed -i '/project(print)/a\
+set(PRINT_VERSION_PATCH 0)' CMakeLists.txt
+  334  sed -i '/project(print)/a\
+set(PRINT_VERSION_TWEAK 0)' CMakeLists.txt
+  335  sed -i '/project(print)/a\
+set(PRINT_VERSION\
+  \${PRINT_VERSION_MAJOR}.\${PRINT_VERSION_MINOR}.\${PRINT_VERSION_PATCH}.\${PRINT_VERSION_TWEAK})' CMakeLists.txt
+  336  sed -i '/project(print)/a\
+set(PRINT_VERSION_STRING "v\${PRINT_VERSION}")' CMakeLists.txt
+  337  git diff
+  338  touch DESCRIPTION
+  339  nano DESCRIPTION
+  340  export DATE="`LANG=en_US date +'%a %b %d %Y'`"
+  341  cat > ChangeLog.md <<EOF
+* ${DATE} ${GITHUB_USERNAME} <${GITHUB_EMAIL}> 0.1.0.0
+- Initial RPM release
+EOF
+
+  342  cat > CPackConfig.cmake <<EOF
+include(InstallRequiredSystemLibraries)
+EOF
+
+  343  cat >> CPackConfig.cmake <<EOF
+set(CPACK_PACKAGE_CONTACT ${GITHUB_EMAIL})
+set(CPACK_PACKAGE_VERSION_MAJOR \${PRINT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR \${PRINT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH \${PRINT_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION_TWEAK \${PRINT_VERSION_TWEAK})
+set(CPACK_PACKAGE_VERSION \${PRINT_VERSION})
+set(CPACK_PACKAGE_DESCRIPTION_FILE \${CMAKE_CURRENT_SOURCE_DIR}/DESCRIPTION)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "static C++ library for printing")
+EOF
+
+  344  cat >> CPackConfig.cmake <<EOF
+
+set(CPACK_RESOURCE_FILE_LICENSE \${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
+set(CPACK_RESOURCE_FILE_README \${CMAKE_CURRENT_SOURCE_DIR}/README.md)
+EOF
+
+  345  cat >> CPackConfig.cmake <<EOF
+
+set(CPACK_RPM_PACKAGE_NAME "print-devel")
+set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+set(CPACK_RPM_PACKAGE_GROUP "print")
+set(CPACK_RPM_CHANGELOG_FILE \${CMAKE_CURRENT_SOURCE_DIR}/ChangeLog.md)
+set(CPACK_RPM_PACKAGE_RELEASE 1)
+EOF
+
+  346  cat >> CPackConfig.cmake <<EOF
+
+set(CPACK_DEBIAN_PACKAGE_NAME "libprint-dev")
+set(CPACK_DEBIAN_PACKAGE_PREDEPENDS "cmake >= 3.0")
+set(CPACK_DEBIAN_PACKAGE_RELEASE 1)
+EOF
+
+  347  cat >> CPackConfig.cmake <<EOF
+
+include(CPack)
+EOF
+
+  348  cat >> CMakeLists.txt <<EOF
+
+include(CPackConfig.cmake)
+EOF
+
+  349  sed -i 's/lab05/lab06/g' README.md
+  350  git add .
+  351  git commit -m "added cpack config"
+  352  git tag v0.1.0.0
+  353  git push origin master --tags
+  354  git branch
+  355  git push origin main --tags
+  356  curl -H "Authorization: token ${GITHUB_TOKEN}"      -H "Accept: application/vnd.github.v3+json"      https://api.github.com/user/repos      -d '{"name":"lab06","private":false,"description":"Laboratory work 6: CPack"}'
+  357  sudo apt update && sudo apt install curl -y
+  358  curl -H "Authorization: token ${GITHUB_TOKEN}"      -H "Accept: application/vnd.github.v3+json"      https://api.github.com/user/repos      -d '{"name":"lab06","private":false,"description":"Laboratory work 6: CPack"}'
+  359  git push origin main --tags
+  360  cmake -H. -B_build
+  361  cmake --build _build
+  362  cd _build
+  363  cpack -G "TGZ"
+  364  cd ..
+  365  cmake -H. -B_build -DCPACK_GENERATOR="TGZ"
+  366  cmake --build _build --target package
+  367  mkdir artifacts
+  368  mv _build/*.tar.gz artifacts
+  369  tree artifacts
+  370  git submodule update --init --recursive
+  371  touch LICENSE
+  372  sed -i '/CPACK_RESOURCE_FILE_LICENSE/d' CPackConfig.cmake
+  373  rm -rf _build
+  374  cmake -H. -B_build
+  375  cmake --build _build
+  376  cd _build
+  377  cpack -G "TGZ"
+  378  cd ..
+  379  mkdir -p artifacts
+  380  mv _build/*.tar.gz artifacts 2>/dev/null
+  381  ls artifacts/
+  382  sudo apt install tree -y
+  383  tree artifacts
+  384  git add .
+  385  git commit -m "fixed submodule init and LICENSE for CPack"
+  386  git push origin main
+  387  popd
+  388  export LAB_NUMBER=06
+  389  git clone https://github.com/tp-labs/lab${LAB_NUMBER} tasks/lab${LAB_NUMBER}
+  390  mkdir -p reports/lab${LAB_NUMBER}
+  391  cp tasks/lab${LAB_NUMBER}/README.md reports/lab${LAB_NUMBER}/REPORT.md
+  392  cd reports/lab${LAB_NUMBER}
+  393  nano REPORT.md
+  394  cd ~/lab05/projects/lab06
+  395  git add reports/ 2>/dev/null || echo "reports not in repo yet"
+  396  cp ~/lab05/reports/lab06/REPORT.md ~/lab05/projects/lab06/REPORT.md
+  397  git add REPORT.md
+  398  git commit -m "added lab report"
+  399  git push origin main
+  400  cd ~/lab05/projects/lab06
+  401  sed -i 's/YOUR_TOKEN_HIDDEN/YOUR_TOKEN_HIDDEN/g' REPORT.md
+  402  git add REPORT.md
+  403  git commit --amend -m "added lab report (token removed)"
+  404  git push origin main --force
+  405  cd ~/lab05/projects/lab06
+  406  cat > solver.cpp << 'EOF'
+#include <iostream>
+int main() {
+    std::cout << "solver v1.0" << std::endl;
+    return 0;
+}
+EOF
+
+  407  cat >> CMakeLists.txt << 'EOF'
+
+add_executable(solver solver.cpp)
+install(TARGETS solver RUNTIME DESTINATION bin)
+EOF
+
+  408  mkdir -p .github/workflows
+  409  cat > .github/workflows/release.yml << 'EOF'
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm tree
+      
+      - name: Configure
+        run: cmake -H. -B_build
+      
+      - name: Build
+        run: cmake --build _build
+      
+      - name: Run tests
+        run: cd _build && ctest --output-on-failure
+      
+      - name: Build TGZ package
+        run: cd _build && cpack -G "TGZ"
+      
+      - name: Build DEB package
+        run: cd _build && cpack -G "DEB"
+      
+      - name: Build RPM package
+        run: cd _build && cpack -G "RPM"
+      
+      - name: Create artifacts directory
+        run: mkdir -p artifacts && mv _build/*.tar.gz _build/*.deb _build/*.rpm artifacts/ 2>/dev/null || true
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: artifacts/
+      
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+EOF
+
+  410  cat >> CPackConfig.cmake << 'EOF'
+
+set(CPACK_PACKAGE_EXECUTABLES "solver" "solver")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${GITHUB_USERNAME}")
+set(CPACK_RPM_PACKAGE_SUMMARY "solver application")
+EOF
+
+  411  git add .
+  412  git commit -m "added solver and CI release workflow"
+  413  git tag v0.2.0.0
+  414  git push origin main --tags
+  415  cd ~/lab05/projects/lab06
+  416  git tag v0.2.0.2
+  417  git push origin v0.2.0.2
+  418  cd ~/lab05/projects/lab06
+  419  curl -s https://api.github.com/repos/vladislavvelichev213-ctrl/lab06/releases | grep -E '"tag_name"|"name"|"assets_url"'
+  420  cd ~/lab05/projects/lab06
+  421  history > terminal_log.txt
