@@ -16,3 +16,5 @@ if(BUILD_TESTS)
     target_include_directories(banking_check PRIVATE banking)
     add_test(NAME banking_check COMMAND banking_check)
 endif()
+
+include(CPackConfig.cmake)

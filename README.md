@@ -15,4 +15,4 @@ cmake --build .
 ctest
 
 ## Repository
-https://github.com/vladislavvelichev213-ctrl/lab05
+https://github.com/vladislavvelichev213-ctrl/lab06
