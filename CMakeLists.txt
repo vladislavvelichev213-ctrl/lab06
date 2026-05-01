@@ -1,30 +1,18 @@
 cmake_minimum_required(VERSION 3.10)
-project(print)
+project(lab05)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(BUILD_EXAMPLES "Build examples" OFF)
-option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_TESTS "Build tests" ON)
 
-add_library(print STATIC sources/print.cpp)
+add_subdirectory(banking)
 
-target_include_directories(print PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-if(BUILD_EXAMPLES)
-  add_subdirectory(examples)
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(third-party/gtest ${CMAKE_BINARY_DIR}/gtest)
+    add_executable(banking_check tests/test_account.cpp tests/test_transaction.cpp tests/test_transaction_mock.cpp)
+    target_link_libraries(banking_check banking gtest_main gmock)
+    target_include_directories(banking_check PRIVATE banking)
+    add_test(NAME banking_check COMMAND banking_check)
 endif()
-
-install(TARGETS print
-    EXPORT print-config
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-)
-
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION include)
-install(EXPORT print-config DESTINATION cmake)
-
-#add_subdirectory(banking)
