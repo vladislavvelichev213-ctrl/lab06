@@ -242,3 +242,41 @@ See `terminal_log.txt` in repository.
 - [CPack DEB](https://cmake.org/cmake/help/latest/cpack_gen/deb.html)
 - [CPack RPM](https://cmake.org/cmake/help/latest/cpack_gen/rpm.html)
 - [CPack TGZ](https://cmake.org/cmake/help/latest/cpack_gen/tgz.html)
+
+### Homework terminal log
+```
+$ cat > solver.cpp << EOF
+#include <iostream>
+int main() {
+    std::cout << "solver v1.0" << std::endl;
+    return 0;
+}
+EOF
+
+$ cat >> CMakeLists.txt << EOF
+
+add_executable(solver solver.cpp)
+install(TARGETS solver RUNTIME DESTINATION bin)
+EOF
+
+$ mkdir -p .github/workflows
+$ cat > .github/workflows/release.yml << EOF
+name: Build and Release
+...
+EOF
+
+$ git add .
+$ git commit -m "added solver and CI release workflow"
+$ git tag v0.2.0.0
+$ git push origin main --tags
+
+$ git tag v0.2.0.2
+$ git push origin v0.2.0.2
+
+$ curl -s https://api.github.com/repos/vladislavvelichev213-ctrl/lab06/releases
+    "assets_url": "...",
+    "tag_name": "v0.2.0.2",
+        "name": "lab05-1.16.0-Linux.deb",
+        "name": "lab05-1.16.0-Linux.rpm",
+        "name": "lab05-1.16.0-Linux.tar.gz",
+```
