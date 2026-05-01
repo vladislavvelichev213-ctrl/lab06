@@ -16,22 +16,29 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y cmake g++ python3-pip
-        pip3 install cpp-coveralls
+        sudo apt install -y cmake g++ lcov
 
-    - name: Configure and build with coverage
+    - name: Configure with coverage
+      run: cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage -fprofile-arcs -ftest-coverage"
+
+    - name: Build
+      run: cmake --build _build
+
+    - name: Run tests
       run: |
-        cd banking
-        cmake -H. -B_build -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="--coverage -fprofile-arcs -ftest-coverage"
-        cmake --build _build
         cd _build
-        ./banking_check
-        cd ../..
+        ctest --output-on-failure
+        cd ..
+
+    - name: Collect coverage data
+      run: |
+        lcov --capture --directory . --output-file coverage.info --no-external
+        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info
+        lcov --list coverage.info
 
     - name: Upload to Coveralls
-      run: |
-        cd banking
-        coveralls --exclude _build --exclude tests --exclude /usr/include --gcov-options '\-lp'
-        cd ..
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      uses: coverallsapp/github-action@v2
+      with:
+        file: coverage.info
+        format: lcov
+        github-token: ${{ secrets.GITHUB_TOKEN }}
