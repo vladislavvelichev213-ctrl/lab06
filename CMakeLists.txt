@@ -18,3 +18,6 @@ if(BUILD_TESTS)
 endif()
 
 include(CPackConfig.cmake)
+
+add_executable(solver solver.cpp)
+install(TARGETS solver RUNTIME DESTINATION bin)
