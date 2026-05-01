@@ -26,17 +26,20 @@ jobs:
 
     - name: Run tests
       run: |
-        ./_build/banking_check
+        cd _build
+        ./banking_check
+        cd ..
 
     - name: Collect coverage
       run: |
-        lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors mismatch
-        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info --ignore-errors mismatch
+        lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors mismatch --ignore-errors unused
+        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info --ignore-errors mismatch --ignore-errors unused
         lcov --list coverage.info
 
     - name: Upload to Coveralls
       uses: coverallsapp/github-action@v2
       with:
         file: coverage.info
-        format: lcov
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        flag-name: cpp
+        parallel: false
