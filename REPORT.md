@@ -6,6 +6,22 @@ GitHub: vladislavvelichev213-ctrl
 
 ## Tutorial
 
+### Step 0: Create lab06 repository
+```bash
+$ curl -H "Authorization: token ${GITHUB_TOKEN}" \
+     -H "Accept: application/vnd.github.v3+json" \
+     https://api.github.com/user/repos \
+     -d '{"name":"lab06","private":false,"description":"Laboratory work 6: CPack"}'
+```
+Output:
+```
+{
+  "name": "lab06",
+  "full_name": "vladislavvelichev213-ctrl/lab06",
+  ...
+}
+```
+
 ### Step 1: Clone lab05 → lab06
 ```bash
 $ export GITHUB_USERNAME=vladislavvelichev213-ctrl
