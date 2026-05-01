@@ -209,6 +209,10 @@ $ git push origin main
 Created `solver.cpp` — simple C++ application.
 
 ### CMakeLists.txt additions
+```
+add_executable(solver solver.cpp)
+install(TARGETS solver RUNTIME DESTINATION bin)
+```
 
 ### GitHub Actions CI/CD
 Workflow `.github/workflows/release.yml` automatically builds packages on tags `v*`:

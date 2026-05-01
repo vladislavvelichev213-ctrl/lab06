@@ -1,4 +1,4 @@
-# Laboratory work 5: Google Test
+# Laboratory work 6: CPack
 
 ## Author
 Vladislav Velichev
