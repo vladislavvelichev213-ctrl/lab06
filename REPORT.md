@@ -67,12 +67,6 @@ $ sed -i '/project(print)/a\
 set(PRINT_VERSION_STRING "v\${PRINT_VERSION}")' CMakeLists.txt
 $ git diff
 ```
-(no output — versions were added successfully)
-```
-```
-(no output — versions were added successfully)
-```
-```
 
 ### Step 3: Create DESCRIPTION and ChangeLog.md
 ```bash
