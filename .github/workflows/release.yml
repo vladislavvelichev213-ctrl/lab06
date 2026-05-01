@@ -1,0 +1,53 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm tree
+      
+      - name: Configure
+        run: cmake -H. -B_build
+      
+      - name: Build
+        run: cmake --build _build
+      
+      - name: Run tests
+        run: cd _build && ctest --output-on-failure
+      
+      - name: Build TGZ package
+        run: cd _build && cpack -G "TGZ"
+      
+      - name: Build DEB package
+        run: cd _build && cpack -G "DEB"
+      
+      - name: Build RPM package
+        run: cd _build && cpack -G "RPM"
+      
+      - name: Create artifacts directory
+        run: mkdir -p artifacts && mv _build/*.tar.gz _build/*.deb _build/*.rpm artifacts/ 2>/dev/null || true
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: artifacts/
+      
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
