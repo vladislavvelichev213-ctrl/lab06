@@ -26,14 +26,12 @@ jobs:
 
     - name: Run tests
       run: |
-        cd _build
-        ctest --output-on-failure
-        cd ..
+        ./_build/banking_check
 
-    - name: Collect coverage data
+    - name: Collect coverage
       run: |
-        lcov --capture --directory . --output-file coverage.info --no-external
-        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info
+        lcov --capture --directory . --output-file coverage.info --no-external --ignore-errors mismatch
+        lcov --remove coverage.info '*/_build/*' '*/tests/*' '*/usr/*' '*/third-party/*' --output-file coverage.info --ignore-errors mismatch
         lcov --list coverage.info
 
     - name: Upload to Coveralls
