@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,12 +42,74 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: packages
+          name: linux-packages
           path: artifacts/
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Configure
+        run: cmake -H. -B_build
+      
+      - name: Build
+        run: cmake --build _build
+      
+      - name: Build DragNDrop package
+        run: cd _build && cpack -G "DragNDrop"
+      
+      - name: Create artifacts directory
+        run: mkdir -p artifacts && mv _build/*.dmg artifacts/ 2>/dev/null || true
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-packages
+          path: artifacts/
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Configure
+        run: cmake -H. -B_build
+      
+      - name: Build
+        run: cmake --build _build
+      
+      - name: Build WIX package
+        run: cd _build && cpack -G "WIX"
+      
+      - name: Create artifacts directory
+        run: mkdir -p artifacts && mv _build/*.msi artifacts/ 2>/dev/null || true
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-packages
+          path: artifacts/
+
+  release:
+    needs: [linux, macos, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      
+      - name: Display structure of downloaded files
+        run: ls -R artifacts
       
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*
+          files: artifacts/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
